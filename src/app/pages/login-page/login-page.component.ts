@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {Component, inject} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AuthService} from '../../auth/auth.service';
+import {from, map, skip, take} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -10,13 +13,36 @@ import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
   styleUrl: './login-page.component.scss'
 })
 export class LoginPageComponent {
+  authService = inject(AuthService);
+  router = inject(Router);
+
   form = new FormGroup({
-    username: new FormControl(null),
-    password: new FormControl(null),
+    username: new FormControl(null, Validators.required),
+    password: new FormControl(null, Validators.required),
   })
 
-  onSubmit(event: Event) {
-    console.log(event);
+  constructor() {
+    // from([1, 2, 3, 4, 5, 6, 7])
+    //   .pipe(
+    //     map(value => value * 2),
+    //     take(2),
+    //     skip(1)
+    //   )
+    //
+    //
+    //   .subscribe(value => {console.log(value)});
+  }
+
+  onSubmit() {
+    console.log(this.form.value);
+
+    if (this.form.valid) {
+      //@ts-ignore
+      this.authService.login(this.form.value)
+        .subscribe(res => {
+          this.router.navigate([''])
+        })
+    }
   }
 
 }
