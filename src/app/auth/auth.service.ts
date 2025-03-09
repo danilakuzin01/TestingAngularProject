@@ -22,6 +22,7 @@ export class AuthService {
   get isAuth(): boolean {
     if (!this.token){
       this.token = this.cookieService.get('token');
+      this.refresh_token = this.cookieService.get('refreshToken');
     }
 
     return !!this.token;
@@ -43,7 +44,7 @@ export class AuthService {
 
   refreshAuthToken() {
     return this.http.post<TokenResponse>(
-      `${this.baseApiUrl}token`,
+      `${this.baseApiUrl}refresh`,
       {
         refresh_token: this.refresh_token,
       }
